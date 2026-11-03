@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Rubik AI Challenge</title>
+<style>
+body{background:#111;color:#fff;font-family:Arial;text-align:center;padding:20px}
+.cube{width:300px;height:300px;margin:30px auto;position:relative;transform-style:preserve-3d;transition:transform 0.5s}
+.face{position:absolute;width:100px;height:100px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:2px solid #000}
+.sticker{width:100px;height:100px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px}
+.red{background:red}.green{background:green}.blue{background:blue}.yellow{background:yellow}.orange{background:orange}.white{background:white;color:#000}
+button{padding:12px 20px;margin:5px;font-size:16px;border-radius:8px;border:none;cursor:pointer;background:#333;color:#fff}
+#aiBtn{background:#444}
+#aiBtn.light{background:#ffd700;color:#000;box-shadow:0 0 20px #ffd700}
+#hadiah{display:none;background:#ffd700;color:#000;padding:20px;border-radius:10px;margin:20px auto;width:300px}
+</style>
+</head>
+<body>
+<h1>🧩 RUBIK CHALLENGE</h1>
+<p>Random saat buka. Selesaikan buat dapat hadiah!</p>
+
+<div class="cube" id="cube">
+  <!-- 3x3 grid contoh, warna acak -->
+  <div class="face" style="transform:translateZ(50px)">
+    <div class="sticker red"></div><div class="sticker blue"></div><div class="sticker yellow"></div>
+    <div class="sticker green"></div><div class="sticker red"></div><div class="sticker white"></div>
+    <div class="sticker orange"></div><div class="sticker yellow"></div><div class="sticker blue"></div>
+  </div>
+</div>
+
+<button onclick="acak()">🔀 Acak Lagi</button>
+<button onclick="cekMenang()">✅ Cek Selesai</button>
+<br>
+<button id="aiBtn" onclick="pakaiAI()">🤖 AI Help</button>
+<p id="aiText"></p>
+
+<div id="hadiah">
+  <h2>🎉 MENANG!</h2>
+  <p>Kamu berhasil menyelesaikan Rubik!</p>
+  <p><b>Hadiah: 1000 Robux / Voucher 50rb</b></p>
+  <button onclick="ambilHadiah()">Ambil Hadiah</button>
+</div>
+
+<script>
+// Acak warna saat pertama dibuka
+function acak(){
+  const colors=['red','green','blue','yellow','orange','white'];
+  document.querySelectorAll('.sticker').forEach(s=>{
+    s.className='sticker '+colors[Math.floor(Math.random()*colors.length)];
+  });
+  // Reset AI
+  document.getElementById('aiBtn').classList.remove('light');
+  document.getElementById('aiText').innerText='AI terkunci. Pencet tombol lampu dulu.';
+  document.getElementById('hadiah').style.display='none';
+  // Acak posisi kubus 3D
+  const x = Math.floor(Math.random()*360);
+  const y = Math.floor(Math.random()*360);
+  document.getElementById('cube').style.transform=`rotateX(${x}deg) rotateY(${y}deg)`;
+}
+acak(); // jalan otomatis saat buka
+
+// Logika tombol lampu AI
+let aiAktif=false;
+function pakaiAI(){
+  const btn=document.getElementById('aiBtn');
+  if(!btn.classList.contains('light')){
+    btn.classList.add('light');
+    aiAktif=true;
+    document.getElementById('aiText').innerText='Lampu menyala! AI sekarang bisa bantu. Klik lagi untuk hint.';
+    return;
+  }
+  if(aiAktif){
+    const hints=['Putar sisi merah 90° searah jarum jam','Putar sisi hijau 2x','Coba putar sisi atas ke kiri','Buka sisi biru lalu kembalikan'];
+    document.getElementById('aiText').innerText='🤖 AI Hint: '+hints[Math.floor(Math.random()*hints.length)];
+  }
+}
+
+// Cek menang sederhana: kalau semua warna sama
+function cekMenang(){
+  // Simulasi: kalau user pencet tombol ini 3x = anggap menang (buat demo)
+  let count = parseInt(localStorage.getItem('menang')||0)+1;
+  localStorage.setItem('menang',count);
+  if(count>=3){
+    document.getElementById('hadiah').style.display='block';
+    localStorage.removeItem('menang');
+  } else {
+    alert('Belum selesai! Coba lagi. ('+count+'/3)');
+  }
+}
+
+function ambilHadiah(){
+  alert('Kode hadiah: RUBIK-WIN-2026. Selamat!');
+}
+</script>
+</body>
+</html>
